@@ -18,6 +18,8 @@ public class GrantsAndFundingPage {
 	WebDriver driver;
 	File sShot;
 
+	String tessarectTextPath = config.readProp("tessarectTextPath");
+
 	public GrantsAndFundingPage(WebDriver driver) {
 		this.driver = driver;
 		initElements(driver, this);
@@ -44,6 +46,6 @@ public class GrantsAndFundingPage {
 
 	public void saveOcrImageToText() throws Exception {
 		String s1 = saveOcrImage(sShot);
-		textToFile(s1, "ocr");
+		textToFile(s1, "ocr", tessarectTextPath);
 	}
 }

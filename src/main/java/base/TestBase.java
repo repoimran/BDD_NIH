@@ -19,19 +19,20 @@ import util.Key;
 public class TestBase {
 
 	public static WebDriver driver;
-	protected HomePage hp;
-	protected GrantsAndFundingPage gp;
-	protected AboutPage ap;
-	protected InstitutesAtNihPage ip;
-	protected NewsAndEventPage np;
-	protected ResearchAndTrainingPage rp;
+	protected static HomePage hp;
+	protected static GrantsAndFundingPage gp;
+	protected static AboutPage ap;
+	protected static InstitutesAtNihPage ip;
+	protected static NewsAndEventPage np;
+	protected static ResearchAndTrainingPage rp;
 
 	Configuration conf = new Configuration();
 
 	public void beforeEachTest(String url) {
 
-		initiatDriver(conf.readProp(Key.chrome.name()));
+		initiatDriver(conf.readProp(Key.browser.name()));
 		initObject();
+
 		driver.manage().window().maximize();
 		int pageLoadTime = conf.readPropNum(Key.pageLoad.name());
 		int implicitLoadTime = conf.readPropNum(Key.implicitLoad.name());
@@ -63,7 +64,6 @@ public class TestBase {
 			driver = new ChromeDriver(options);
 			break;
 		default:
-			System.out.println("invalid broserkey, default Browser >>>  Chrome  <<<<");
 			WebDriverManager.chromedriver().setup();
 			driver = new ChromeDriver();
 			break;

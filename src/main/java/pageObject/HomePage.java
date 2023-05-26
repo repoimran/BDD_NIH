@@ -5,12 +5,10 @@ import static common.CommonAction.insert;
 import static common.CommonAction.mouseHover;
 import static common.CommonAction.screenshotElement;
 import static common.CommonAction.screenshotPage;
-import static common.CommonAction.switchWindow;
 import static org.openqa.selenium.support.PageFactory.initElements;
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import org.openqa.selenium.By;
+import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -32,6 +30,8 @@ public class HomePage {
 	WebElement searchBox;
 	@FindBy(xpath = "//a[normalize-space()='Subscribe']")
 	WebElement SubscribeTab;
+	@FindBy(xpath = "//a[normalize-space()='COVID-19 Treatment Guidelines']")
+	WebElement covidGuidelinesLink;
 
 	public void getPageTitle() {
 		String title = driver.getTitle();
@@ -55,23 +55,11 @@ public class HomePage {
 		TimeUnit.MILLISECONDS.sleep(config.readPropNum(Key.pause.name()));
 	}
 
-	public void enterEmailForSubscribe() throws Exception {// did not work cause of captcha
-		String rootWindow = driver.getWindowHandle();
-		click(SubscribeTab);
-		Set<String> allWindows = driver.getWindowHandles();
-		switchWindow(rootWindow, allWindows, driver);
-		WebElement e1 = driver.findElement(By.id("email"));
-		insert(e1, config.readProp(Key.email.name()));
-		WebElement e2 = driver.findElement(By.xpath("//input[@name='commit']"));
-		click(e2, driver); // jsClick overriding
-		WebElement e3 = driver.findElement(By.xpath("//input[@id='subscriber_email_confirm']"));
-		insert(e3, config.readProp(Key.email.name()));
-		WebElement e4 = driver.findElement(By.xpath("//input[@id='subscriber_password']"));
-		insert(e4, config.readProp(Key.pass.name()));
-		WebElement e5 = driver.findElement(By.xpath("//input[@id='subscriber_password_confirm']"));
-		insert(e5, config.readProp(Key.pass.name()));
-		screenshotElement(driver, "TestImageOfEmail", e3);// testing element screenshot
-
+	public void checkCovid19GuideLineLink() {
+		// TODO:
+		click(covidGuidelinesLink);
+		String redir = driver.getCurrentUrl();
+		Assert.assertEquals(redir, "https://www.covid19treatmentguidelines.nih.gov/");
 	}
 
 }
