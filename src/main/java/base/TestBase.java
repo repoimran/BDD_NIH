@@ -30,7 +30,7 @@ public class TestBase {
 
 	public void beforeEachTest(String url) {
 
-		initiatDriver(conf.readProp(Key.browser.name()));
+		initiatDriver(conf.readProp(Key.chrome.name()));
 		initObject();
 		driver.manage().window().maximize();
 		int pageLoadTime = conf.readPropNum(Key.pageLoad.name());
