@@ -1,28 +1,19 @@
 package base;
 
 import io.cucumber.java.After;
-import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
-import io.cucumber.java.BeforeAll;
+import util.Configuration;
 import util.Key;
 
 public class Hook {
 
 	static TestBase testBase;
-
-	@BeforeAll
-	public static void beforeAllHook() {
-		testBase = new TestBase();
-	}
+	static Configuration config = new Configuration();
 
 	@Before
 	public static void beforeHook() {
-		testBase.beforeEachTest(Key.chrome.name());
-	}
-
-	@AfterAll
-	public static void afterAllHook() {
-		System.gc();
+		testBase = new TestBase();
+		testBase.beforeEachTest(config.readProp(Key.url.name()));
 	}
 
 	@After

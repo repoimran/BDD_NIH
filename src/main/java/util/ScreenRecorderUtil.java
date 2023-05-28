@@ -25,10 +25,14 @@ import org.monte.media.FormatKeys.MediaType;
 import org.monte.media.Registry;
 import org.monte.media.math.Rational;
 import org.monte.screenrecorder.ScreenRecorder;
+import static util.Key.*;
 
 public class ScreenRecorderUtil extends ScreenRecorder {
 	public static ScreenRecorder screenRecorder;
 	public String name;
+	String iMoivePath;
+	Configuration config = new Configuration();
+
 	public ScreenRecorderUtil(GraphicsConfiguration cfg, Rectangle captureArea, Format fileFormat, Format screenFormat,
 			Format mouseFormat, Format audioFormat, File movieFolder, String name) throws IOException, AWTException {
 		super(cfg, captureArea, fileFormat, screenFormat, mouseFormat, audioFormat, movieFolder);
@@ -39,7 +43,8 @@ public class ScreenRecorderUtil extends ScreenRecorder {
 	protected File createMovieFile(Format fileFormat) throws IOException {
 
 		// Modify the path to use the "test-output" folder
-		File movieFolder = new File("./test-output/iMovies");
+		iMoivePath = config.readProp(Key.test_output_path.name() + Key.iMovieFolder.name());
+		File movieFolder = new File(iMoivePath);
 
 		if (!movieFolder.exists()) {
 			movieFolder.mkdirs();

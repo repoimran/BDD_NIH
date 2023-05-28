@@ -25,4 +25,8 @@ public class CommonWait {
 	public static void waitUntilClickable(WebElement element) {
 		wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
+
+	public static void waitUntilAlert() {
+		wait.until(ExpectedConditions.alertIsPresent());
+	}
 }

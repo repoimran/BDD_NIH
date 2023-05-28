@@ -9,8 +9,11 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.JavascriptExecutor;
@@ -26,14 +29,14 @@ import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import report.Log;
 import util.Configuration;
+import util.Key;
 import util.Misc;
 
 public class CommonAction {
 	static Configuration config = new Configuration();
 
-	static String test_output_path = config.readProp("test_output_path");
-	static String screenshotPath = config.readProp("screenshotPath");
-	static String tessarectTextPath = config.readProp("tessarectTextPath");
+	static String test_output_path = config.readProp(Key.test_output_path.name());
+	static String screenshotPath = config.readProp(Key.screenshotPath.name());
 
 	public static String getInnerHTML(WebElement element) {
 		waitUntilVisible(element);
@@ -95,25 +98,64 @@ public class CommonAction {
 		}
 	}
 
-	public static void screenshotElement(WebDriver driver, String name, WebElement element) throws Exception {
+	public static File screenshotElement(WebDriver driver, String name, WebElement element) throws Exception {
 		waitUntilVisible(element);
 		File source = element.getScreenshotAs(OutputType.FILE);
 		String dir = createDirectory(screenshotPath);
-		File screenShotTarget = new File(dir + name + ".png");
-		FileUtils.copyFile(source, screenShotTarget);
-
+		File screenShotTargetFile = new File(dir + name + ".png");
+		FileUtils.copyFile(source, screenShotTargetFile);
+		return screenShotTargetFile;
 		// We can use either FileHandler or FileUtils
 		// FileHandler.copy(src, new File(screenshotPath + name + ".png"));
 
 	}
 
 	public static File screenshotPage(WebDriver driver, String name) throws IOException {
-		File screenShotTarget;
+		File screenShotTargetFile;
 		File source = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		String dir = createDirectory(screenshotPath);
-		screenShotTarget = new File(dir + name + ".png");
-		FileUtils.copyFile(source, screenShotTarget);
-		return screenShotTarget;
+		screenShotTargetFile = new File(dir + name + ".png");
+		FileUtils.copyFile(source, screenShotTargetFile);
+		return screenShotTargetFile;
+	}
+
+	public static String createDirectory(String dirPath) {
+		String dir = test_output_path + dirPath;
+		// check if directory exists
+		File directory = new File(dir);
+		if (!directory.exists()) {
+			directory.mkdirs();// if not create directory
+		}
+		return dir;
+	}
+
+	public static String saveOcrImage(File screenshot) {
+		ITesseract image = new Tesseract();
+		String ocrString = "";
+		try {
+			ocrString = image.doOCR(screenshot);
+			System.out.println("******************** OCR TEXT START ********************");
+			System.out.println(ocrString);
+			System.out.println("******************** OCR TEXT END ********************");
+		} catch (TesseractException e) {
+			e.printStackTrace();
+		}
+		return ocrString;
+	}
+
+	public static String textToFile(String text, String name, String path, boolean addTimeStamp) throws IOException {
+		String dir = createDirectory(path);
+		// Create the empty text file name ocr.txt
+		String filePath = dir + File.separator + name + ".txt"; // Build the file path
+
+		// if addTimeStamp is true only then add time stamp
+		if (addTimeStamp)
+			text = getTimestamp() + "\n" + text; // adding timestamp and new line
+
+		FileWriter fileWriter = new FileWriter(filePath);
+		fileWriter.write(text);// write the text to the file, not yet saved
+		fileWriter.close();// save the file
+		return filePath;
 	}
 
 	public static void mouseHover(WebDriver driver, WebElement element) {
@@ -140,20 +182,6 @@ public class CommonAction {
 
 	}
 
-	public static String saveOcrImage(File screenshot) {
-		ITesseract image = new Tesseract();
-		String ocrString = "";
-		try {
-			ocrString = image.doOCR(screenshot);
-			System.out.println("******************** OCR TEXT START ********************");
-			System.out.println(ocrString);
-			System.out.println("******************** OCR TEXT END ********************");
-		} catch (TesseractException e) {
-			e.printStackTrace();
-		}
-		return ocrString;
-	}
-
 	public static String getTimestamp() {
 		Date date = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
@@ -161,26 +189,34 @@ public class CommonAction {
 		return timestamp;
 	}
 
-	public static void textToFile(String text, String name) throws IOException {
-		String dir = createDirectory(tessarectTextPath);
-		// Create the empty text file name ocr.txt
-		String filePath = dir + File.separator + name + ".txt"; // Build the file path
+	public static String readTextFile(String filePath) throws IOException {
 
-		text = getTimestamp() + "\n" + text; // adding timestamp and new line
-		FileWriter fileWriter = new FileWriter(filePath);
-		fileWriter.write(text);// write the text to the file, not yet saved
-		fileWriter.close();// save the file
+		String content = FileUtils.readFileToString(new File(filePath), StandardCharsets.UTF_8);
+
+		return content;
 
 	}
 
-	public static String createDirectory(String dirName) {
-		String dir = test_output_path + dirName;
-		// check if directory exists
-		File directory = new File(dir);
-		if (!directory.exists()) {
-			directory.mkdirs();// if not create directory
+	public static String getHref(WebElement element) {
+		return element.getAttribute("href");
+	}
+
+	public static void printArray(String[] arr) {
+		for (String s : arr) {
+			System.out.print(s.trim() + " ");
 		}
-		return dir;
+		System.out.print("\n");
+	}
+
+	public static String trimArrayElemments(String[] arr) {
+		List<String> tempArray = new ArrayList<String>();
+		for (String s : arr) {
+			s = s.trim();
+			tempArray.add(s);
+		}
+		String finalString = String.join(" ", tempArray);
+		return finalString;
+
 	}
 
 }

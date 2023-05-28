@@ -1,6 +1,6 @@
 package util;
 
 public enum Key {
-	pageLoad, implicitLoad, explicitWait, email, pass, phone, adress, pause, downloadPath, screenshotPath, logPath,
-	ocrPath, url, chrome
+	url, browser, pageLoad, implicitLoad, explicitWait, pause, screenshotPath, tessarectTextPath, HTMLTextDirPath,
+	logPath, iMovieFolder, test_output_path
 }
