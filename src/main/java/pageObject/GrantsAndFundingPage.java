@@ -46,6 +46,6 @@ public class GrantsAndFundingPage {
 
 	public void saveOcrImageToText() throws Exception {
 		String s1 = saveOcrImage(sShot);
-		textToFile(s1, "ocr", tessarectTextPath);
+		textToFile(s1, "ocr", tessarectTextPath, true);
 	}
 }
