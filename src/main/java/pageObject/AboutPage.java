@@ -1,21 +1,22 @@
 package pageObject;
 
-import static common.CommonAction.click;
-import static common.CommonAction.getInnerHTML;
-import static common.CommonAction.screenshotElement;
-import static common.CommonAction.textToFile;
-import static common.CommonAction.saveOcrImage;
-import static common.CommonAction.readTextFile;
-import static common.CommonAction.getHref;
-import static org.openqa.selenium.support.PageFactory.initElements;
 import java.io.File;
 import java.io.IOException;
 import org.junit.Assert;
+import static org.openqa.selenium.support.PageFactory.initElements;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import util.Configuration;
 import util.Key;
+import static common.CommonAction.click;
+import static common.CommonAction.getHref;
+import static common.CommonAction.getInnerHTML;
+import static common.CommonAction.readTextFile;
+import static common.CommonAction.saveOcrImage;
+import static common.CommonAction.screenshotElement;
+import static common.CommonAction.textToFile;
+import static common.CommonAction.trimArrayElemments;
 
 public class AboutPage {
 	WebDriver driver;
@@ -69,27 +70,23 @@ public class AboutPage {
 
 	public static void generateTextFromScreenshotText() throws IOException {
 		textScreenshot = saveOcrImage(screenshotFile);
-		System.out.println("from   generateTextFromScreenshotText");
 	}
 
 	public void checkMailPhonePageInfoHtml() throws IOException {
-		System.out.println("from" + "checkMailPhonePageInfo");
 		String t1 = getInnerHTML(mailAndPhoneElement);
-		textHtmlFilePath = textToFile(t1, "contactHTML", textHtmlDirPath);
+		textHtmlFilePath = textToFile(t1, "contactHTML", textHtmlDirPath, false);
 
 	}
 
 	public void compareHTMLTextToScreenshotText() throws IOException {
-
-		// we have path of Html text File;
-		String s1 = readTextFile(textHtmlFilePath);
-		// we have textofScreenshot
-		String s2 = textScreenshot;
-		System.out.println("from compareHTMLTextToScreenshotText  s1");
-		System.out.println(s1);
-		System.out.println("from compareHTMLTextToScreenshotText  s2 (ocr)");
-		System.out.println(s2);
-		// Assert.assertEquals(s1, s2);
+		String pattern = "&amp;| & ";
+		String textFromHTML = readTextFile(textHtmlFilePath);
+		String[] textFromHTMLFormatted = textFromHTML.split(pattern);
+		String textFromOcr = textScreenshot;
+		String[] textFromOcrFormatted = textFromOcr.split(pattern);
+		String resultOCR = trimArrayElemments(textFromOcrFormatted);
+		String resultHTML = trimArrayElemments(textFromHTMLFormatted);
+		Assert.assertEquals(resultOCR, resultHTML);
 
 	}
 }

@@ -57,12 +57,12 @@ public class TestBase {
 			WebDriverManager.edgedriver().setup();
 			driver = new EdgeDriver();
 			break;
-		case "headless":
-			WebDriverManager.chromedriver().setup();
-			ChromeOptions options = new ChromeOptions();
-			options.addArguments("--headless");
-			driver = new ChromeDriver(options);
-			break;
+//		case "headless":
+//			WebDriverManager.chromedriver().setup();
+//			ChromeOptions options = new ChromeOptions();
+//			options.addArguments("--headless");
+//			driver = new ChromeDriver(options);
+//			break;
 		default:
 			WebDriverManager.chromedriver().setup();
 			driver = new ChromeDriver();

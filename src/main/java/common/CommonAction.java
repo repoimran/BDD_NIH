@@ -11,7 +11,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.JavascriptExecutor;
@@ -141,12 +143,15 @@ public class CommonAction {
 		return ocrString;
 	}
 
-	public static String textToFile(String text, String name, String path) throws IOException {
+	public static String textToFile(String text, String name, String path, boolean addTimeStamp) throws IOException {
 		String dir = createDirectory(path);
 		// Create the empty text file name ocr.txt
 		String filePath = dir + File.separator + name + ".txt"; // Build the file path
 
-		text = getTimestamp() + "\n" + text; // adding timestamp and new line
+		// if addTimeStamp is true only then add time stamp
+		if (addTimeStamp)
+			text = getTimestamp() + "\n" + text; // adding timestamp and new line
+
 		FileWriter fileWriter = new FileWriter(filePath);
 		fileWriter.write(text);// write the text to the file, not yet saved
 		fileWriter.close();// save the file
@@ -194,6 +199,24 @@ public class CommonAction {
 
 	public static String getHref(WebElement element) {
 		return element.getAttribute("href");
+	}
+
+	public static void printArray(String[] arr) {
+		for (String s : arr) {
+			System.out.print(s.trim() + " ");
+		}
+		System.out.print("\n");
+	}
+
+	public static String trimArrayElemments(String[] arr) {
+		List<String> tempArray = new ArrayList<String>();
+		for (String s : arr) {
+			s = s.trim();
+			tempArray.add(s);
+		}
+		String finalString = String.join(" ", tempArray);
+		return finalString;
+
 	}
 
 }
